@@ -1,20 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { postRequest } from "./utils/api";
+import { postRequest } from "../../app/utils/api";
 import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("User");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const loginHandler = async () => {
-    const res = await postRequest("/auth/login", { email, password });
+  const registerHandler = async () => {
+    const res = await postRequest("/auth/signup", {
+      name,
+      role,
+      email,
+      password,
+    });
 
-    if (res.data.token) {
-      localStorage.setItem("token", res.data.token);
-      router.push("/dashboard");
+    if (res.data.user) {
+      router.push("/");
     } else {
       alert(res.data.message);
     }
@@ -25,13 +31,19 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8 space-y-6 animate-fadeIn">
         
         <h1 className="text-3xl font-extrabold text-center text-gray-800">
-          Welcome Back
+          Create Account
         </h1>
         <p className="text-center text-gray-500 -mt-3">
-          Login to continue
+          Join us today
         </p>
 
         <div className="space-y-4">
+          <input
+            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            placeholder="Full Name"
+            onChange={(e) => setName(e.target.value)}
+          />
+
           <input
             className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
             placeholder="Email"
@@ -45,19 +57,27 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
+          <select
+            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+          </select>
+
           <button
-            onClick={loginHandler}
+            onClick={registerHandler}
             className="w-full bg-purple-600 text-white p-3 rounded-xl font-semibold text-lg hover:bg-purple-700 transition-all shadow-md hover:shadow-xl"
           >
-            Login
+            Register
           </button>
         </div>
 
         <p
           className="text-purple-700 text-center font-medium cursor-pointer hover:underline"
-          onClick={() => router.push("/register")}
+          onClick={() => router.push("/")}
         >
-          Create an account
+          Already have an account?
         </p>
       </div>
     </div>
